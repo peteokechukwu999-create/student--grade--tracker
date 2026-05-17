@@ -1,172 +1,129 @@
-// ARRAY TO STORE STUDENTS
-let students = [];
+// Array to store student objects
+let students = JSON.parse(localStorage.getItem("students")) || [];
 
-// SELECT HTML ELEMENTS
+// Select DOM elements
 const studentName = document.getElementById("studentName");
 const studentGrade = document.getElementById("studentGrade");
 const addBtn = document.getElementById("addBtn");
-const clearBtn = document.getElementById("clearBtn");
 const studentList = document.getElementById("studentList");
 const averageGrade = document.getElementById("averageGrade");
 const errorMessage = document.getElementById("errorMessage");
 
-// LOAD LOCAL STORAGE
-window.onload = function () {
+// Display students when page loads
+displayStudents();
 
-    const savedStudents = localStorage.getItem("students");
-
-    if (savedStudents) {
-        students = JSON.parse(savedStudents);
-        displayStudents();
-        calculateAverage();
-    }
-};
-
-// ADD BUTTON EVENT
+// Add Student Event
 addBtn.addEventListener("click", function () {
+  const name = studentName.value.trim();
+  const gradeValue = studentGrade.value.trim();
+  const grade = Number(gradeValue);
 
-    const name = studentName.value.trim();
-    const gradeValue = studentGrade.value.trim();
-    const grade = Number(gradeValue);
+  // Validation
+  if (name === "") {
+    showError("Student name cannot be empty.");
+    studentName.focus();
+    return;
+  }
 
-    // VALIDATION
-    if (name === "") {
-        showError("Student name cannot be empty.");
-        return;
-    }
+  if (gradeValue === "" || isNaN(grade) || grade < 0 || grade > 100) {
+    showError("Grade must be a number between 0 and 100.");
+    studentGrade.focus();
+    return;
+  }
 
-    if (gradeValue === "" || isNaN(grade) || grade < 0 || grade > 100) {
-        showError("Grade must be a number between 0 and 100.");
-        return;
-    }
+  // Clear error
+  errorMessage.textContent = "";
 
-    clearError();
+  // Create student object
+  const student = {
+    id: Date.now(),
+    name: name,
+    grade: grade
+  };
 
-    // CREATE STUDENT OBJECT
-    const student = {
-        id: Date.now(),
-        name: name,
-        grade: grade
-    };
+  // Add student to array
+  students.push(student);
 
-    // ADD TO ARRAY
-    students.push(student);
+  // Save to localStorage
+  saveToLocalStorage();
 
-    // SAVE TO LOCAL STORAGE
-    saveToLocalStorage();
+  // Update UI
+  displayStudents();
 
-    // DISPLAY STUDENTS
-    displayStudents();
-
-    // CALCULATE AVERAGE
-    calculateAverage();
-
-    // CLEAR INPUTS
-    studentName.value = "";
-    studentGrade.value = "";
+  // Clear input fields
+  studentName.value = "";
+  studentGrade.value = "";
 });
 
-function showError(message) {
-    errorMessage.textContent = message;
-}
-
-function clearError() {
-    errorMessage.textContent = "";
-}
-
-clearBtn.addEventListener("click", function () {
-    if (students.length === 0) {
-        return;
-    }
-
-    if (!confirm("Are you sure you want to clear all students?")) {
-        return;
-    }
-
-    students = [];
-    saveToLocalStorage();
-    displayStudents();
-    calculateAverage();
-});
-
-// DISPLAY STUDENTS FUNCTION
+// Function to display students
 function displayStudents() {
+  studentList.innerHTML = "";
 
-    studentList.innerHTML = "";
+  const average = calculateAverage();
 
-    const average = getAverage();
+  students.forEach(function(student) {
 
-    students.forEach(function(student) {
+    const row = document.createElement("tr");
 
-        const row = document.createElement("tr");
+    // Highlight above-average students
+    if (student.grade > average) {
+      row.classList.add("above-average");
+    }
 
-        // BONUS FEATURE
-        if (student.grade > average) {
-            row.classList.add("above-average");
-        }
+    row.innerHTML = `
+      <td>${student.name}</td>
+      <td>${student.grade}</td>
+      <td>
+        <button class="delete-btn" onclick="deleteStudent(${student.id})">
+          Delete
+        </button>
+      </td>
+    `;
 
-        row.innerHTML = `
-            <td>${student.id}</td>
-            <td>${student.name}</td>
-            <td>${student.grade}</td>
-            <td>${getLetterGrade(student.grade)}</td>
-            <td>
-                <button onclick="deleteStudent(${student.id})">
-                    Delete
-                </button>
-            </td>
-        `;
+    studentList.appendChild(row);
+  });
 
-        studentList.appendChild(row);
-    });
-
-    clearBtn.disabled = students.length === 0;
-}
-
-// DELETE STUDENT FUNCTION
-function deleteStudent(id) {
-
-    students = students.filter(function(student) {
-        return student.id !== id;
-    });
-
-    saveToLocalStorage();
-
-    displayStudents();
-
-    calculateAverage();
-}
-
-// CALCULATE AVERAGE FUNCTION
-function calculateAverage() {
-
-    const average = getAverage();
-
-    averageGrade.textContent =
+  averageGrade.textContent =
     `Average Grade: ${average.toFixed(2)}`;
 }
 
-// GET AVERAGE FUNCTION
-function getAverage() {
+// Function to calculate average grade
+function calculateAverage() {
 
-    if (students.length === 0) {
-        return 0;
-    }
+  if (students.length === 0) {
+    return 0;
+  }
 
-    let total = 0;
+  let total = 0;
 
-    students.forEach(function(student) {
-        total += student.grade;
-    });
+  students.forEach(function(student) {
+    total += student.grade;
+  });
 
-    return total / students.length;
+  return total / students.length;
 }
 
-// SAVE TO LOCAL STORAGE
-function saveToLocalStorage() {
+// Function to delete student
+function deleteStudent(id) {
 
-    localStorage.setItem(
-        "students",
-        JSON.stringify(students)
-    );
+  students = students.filter(function(student) {
+    return student.id !== id;
+  });
+
+  // Save updated data
+  saveToLocalStorage();
+
+  // Refresh UI
+  displayStudents();
+}
+
+// Function to save data
+function saveToLocalStorage() {
+  localStorage.setItem("students", JSON.stringify(students));
+}
+
+// Function to show error
+function showError(message) {
+  errorMessage.textContent = message;
+  alert(message);
 }
