@@ -1,0 +1,114 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    color: #1f2937;
+}
+
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 32px;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 18px 50px rgba(15, 23, 42, 0.08);
+}
+
+h1 {
+    margin: 0 0 24px;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.form-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+    margin-bottom: 22px;
+}
+
+.form-section input,
+.form-section button {
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    padding: 14px 16px;
+    font-size: 1rem;
+}
+
+.form-section input {
+    background-color: #f8fafc;
+    flex: 1 1 220px;
+    min-width: 180px;
+}
+
+.form-section button {
+    background-color: #2563eb;
+    color: #ffffff;
+    border: none;
+    cursor: pointer;
+    flex: 0 0 auto;
+    transition: background-color 0.2s ease;
+}
+
+.form-section button.secondary {
+    background-color: #e5e7eb;
+    color: #111827;
+}
+
+.form-section button:hover {
+    background-color: #1d4ed8;
+}
+
+.form-section button.secondary:hover {
+    background-color: #d1d5db;
+}
+
+.error-message {
+    color: #dc2626;
+    text-align: center;
+    margin: 0 0 18px;
+    min-height: 1.5em;
+    font-weight: 600;
+}
+
+#averageGrade {
+    text-align: center;
+    margin: 0 0 18px;
+    font-size: 1.2rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 14px 16px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+th {
+    background-color: #f3f4f6;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: #f8fafc;
+}
+
+.above-average td {
+    background-color: #ecfdf5;
+}
+
+button {
+    font: inherit;
+}
+
+button:focus,
+input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+}
